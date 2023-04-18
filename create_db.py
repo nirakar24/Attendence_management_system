@@ -4,13 +4,10 @@ db=sqlite3.connect("students.db")
 
 cur_sor = db.cursor()
 
-cur_sor.execute("""CREATE TABLE Attendence (
+cur_sor.execute("""CREATE TABLE teachers (
             name text,
-            roll_no integer,
             Department text,
-            Password text,
-            present integer,
-            absent integer
+            Password text
         )
             """)
 

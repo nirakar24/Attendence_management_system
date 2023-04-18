@@ -5,6 +5,98 @@ import sqlite3
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme('green')
 
+def detail():
+
+    def disable_event():
+        pass
+    def present():
+        db=sqlite3.connect("students.db")
+
+        cur_sor = db.cursor()
+        cur_sor.execute(f"UPDATE Attendence SET present=present+1 WHERE name='{name_usr.get()}'")
+        db.commit()
+
+        db.close()   
+        messagebox.showinfo("Info","Your attendence have been recorded\nChanges will be applied after restart")
+
+    def absent():
+        db=sqlite3.connect("students.db")
+
+        cur_sor = db.cursor()
+        cur_sor.execute(f"UPDATE Attendence SET absent=absent+1 WHERE name='{name_usr.get()}'")
+        db.commit()
+
+        db.close()   
+        messagebox.showinfo("Info","You have missed a class\nChanges will be applied after restart")
+        
+    db=sqlite3.connect("students.db")
+
+    cur_sor = db.cursor()
+    cur_sor.execute(f"SELECT * FROM Attendence WHERE name='{name_usr.get()}'")
+
+    student = cur_sor.fetchall()
+    details=student[0]
+
+    key=""
+    
+    for i in student:
+        print(i)
+        key=i[3]
+
+        print(key)
+        db.commit()
+
+        db.close()
+        window2=ctk.CTkToplevel()
+        window2.geometry("400x600+0+0")
+        window2.title("User Profile")
+        # usr=user.get()
+        frame=ctk.CTkFrame(window2)
+        frame.pack(pady=20,padx=60,fill="both",expand=True)
+        label=ctk.CTkLabel(frame,text="Profile",font=("Roboto", 24))
+        label.pack(pady=12,padx=10)
+        label2=ctk.CTkLabel(frame,text=f"Name : {details[0]} ")
+        label2.pack(pady=12,padx=10)
+        label3=ctk.CTkLabel(frame,text=f"Roll no : {details[1]} ")
+        label3.pack(pady=12,padx=10)
+        label4=ctk.CTkLabel(frame,text=f"Department : {details[2]} ")
+        label4.pack(pady=12,padx=10)
+        label5=ctk.CTkLabel(frame,text=f"Classes Attended : {details[4]} ")
+        label5.pack(pady=12,padx=10)
+        label6=ctk.CTkLabel(frame,text=f"Not attended : {details[5]} ")
+        label6.pack(pady=12,padx=10)
+        total=details[4]+details[5]
+        try:
+            label7=ctk.CTkLabel(frame,text=f"Overall Percentage : {round(((details[4]/(total))*100),2)} %")
+            label7.pack(pady=12,padx=10)
+
+            slider_1 = ctk.CTkSlider(master=frame, from_=0, to=100,state='disabled')
+            slider_1.pack(pady=12, padx=10)
+            slider_1.set(round(((details[4]/(total))*100),2))
+
+        except(ZeroDivisionError):
+            label7=ctk.CTkLabel(frame,text=f"Overall Percentage : 0 %")
+            label7.pack(pady=12,padx=10)
+
+            slider_1 = ctk.CTkSlider(master=frame, from_=0, to=100,state='disabled')
+            slider_1.pack(pady=12, padx=10)
+            slider_1.set(0)
+
+
+        button2=ctk.CTkButton(frame,text="Present",command=present)
+        button2.pack(pady=12,padx=10)
+        button3=ctk.CTkButton(frame,text="Absent",command=absent)
+        button3.pack(pady=12,padx=10)
+        button1=ctk.CTkButton(frame,text="close",command=close)
+        button1.pack(pady=12,padx=10)
+        root.withdraw()
+
+        window2.protocol("WM_DELETE_WINDOW", disable_event)
+        window2.mainloop()
+
+        window2.mainloop()
+    
+
 def close():
     root.destroy()
 
@@ -69,7 +161,66 @@ def sign_up():
     button=ctk.CTkButton(frame,text="Proceed",command=data)
     button.pack(pady=12,padx=10)
     root.withdraw()
+
+def all():
+    def disable_event():
+        pass
+    global name_usr
+    db=sqlite3.connect("students.db")
+
+    cur_sor = db.cursor()
+    cur_sor.execute(f"SELECT * from Attendence")
+    students=cur_sor.fetchall()
+
+    for name in students:
+        print(name[0])
+    db.commit()
+
+    db.close()   
+
+    window=ctk.CTkToplevel()
+    window.geometry("500x550+0+0")
+    window.title("All Students")
+    root.withdraw()
+        # usr=user.get()
+    frame=ctk.CTkFrame(window)
+    frame.pack(pady=20,padx=60,fill="both",expand=True)
+
+    label=ctk.CTkLabel(frame,text="List of all students",font=("Roboto", 24))
+    label.pack(pady=12,padx=10)
+
+    for i in students:
+        if i[0]!='admin':
+            print(i[0])
+            button=ctk.CTkButton(frame,text=f"{i[0]}")
+            button.pack(pady=12,padx=10)
+        else:
+            continue
+        
+    button1=ctk.CTkButton(frame,text="close",command=close)
+    button1.pack(pady=12,padx=10,side='bottom')
+
+    button2=ctk.CTkButton(frame,text="Proceed",command=detail)
+    button2.pack(pady=12,padx=10,side='bottom')
+
+    name_usr=ctk.CTkEntry(frame,placeholder_text="Student name")
+    name_usr.pack(pady=12,padx=10,side='bottom')
+
+
+    root.withdraw()
+
+    window.protocol("WM_DELETE_WINDOW", disable_event)
+
+
+
+
+
+
     
+
+
+    window.mainloop
+
 
 def login():
     def disable_event():
@@ -108,6 +259,7 @@ def login():
         print(i)
         key=i[3]
 
+    print(details[0])
     print(key)
     db.commit()
 
@@ -115,7 +267,10 @@ def login():
 
     given_key=passwd.get()
 
-    if given_key==key:
+    if given_key=='0000' and details[0]=="admin":
+        all()
+
+    elif given_key==key:
         window=ctk.CTkToplevel()
         window.geometry("400x600+0+0")
         window.title("User Profile")
@@ -151,11 +306,6 @@ def login():
             slider_1.pack(pady=12, padx=10)
             slider_1.set(0)
 
-
-        button2=ctk.CTkButton(frame,text="Present",command=present)
-        button2.pack(pady=12,padx=10)
-        button3=ctk.CTkButton(frame,text="Absent",command=absent)
-        button3.pack(pady=12,padx=10)
         button1=ctk.CTkButton(frame,text="close",command=close)
         button1.pack(pady=12,padx=10)
         root.withdraw()
