@@ -263,7 +263,7 @@ def sign_up():
 
     label=ctk.CTkLabel(frame,text="Sign Up",font=("Roboto", 24))
     label.pack(pady=12,padx=10)
-
+ 
     name=ctk.CTkEntry(frame,placeholder_text="Your name")
     name.pack(pady=12,padx=10)
 
@@ -293,8 +293,8 @@ def all():
     cur_sor.execute(f"SELECT * from Attendence")
     students=cur_sor.fetchall()
 
-    for name in students:
-        print(name[0])
+    # for name in students:
+        # print(name[0])
     db.commit()
 
     db.close()   
@@ -312,7 +312,7 @@ def all():
 
     for i in students:
         if i[0]!='admin':
-            print(i[0])
+            # print(i[0])
             button=ctk.CTkButton(frame,text=f"{i[0]}")
             button.pack(pady=12,padx=10)
         else:
