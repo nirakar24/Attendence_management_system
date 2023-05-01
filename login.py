@@ -223,7 +223,8 @@ def detail():
         window2.mainloop()
 
         window2.mainloop()
-    
+
+   
 
 def close():
     root.destroy()
@@ -292,6 +293,7 @@ def all():
     cur_sor = db.cursor()
     cur_sor.execute(f"SELECT * from Attendence")
     students=cur_sor.fetchall()
+    print(students)
 
     # for name in students:
         # print(name[0])
@@ -300,39 +302,45 @@ def all():
     db.close()   
 
     window=ctk.CTkToplevel()
-    window.geometry("500x550+0+0")
+    window.geometry("740x550+400+100")
     window.title("All Students")
     root.withdraw()
         # usr=user.get()
+    
+    label=ctk.CTkLabel(window,text="List of all students",font=("Roboto", 24))
+    label.grid(row=0,column=0,pady=12,padx=10,columnspan=3)
+
     frame=ctk.CTkFrame(window)
-    frame.pack(pady=20,padx=60,fill="both",expand=True)
+    frame.grid(row=1,column=0,pady=20,padx=60,columnspan=3)
+    l=[("Name","Roll no.","Branch","Password","Present","Absent")]
 
-    label=ctk.CTkLabel(frame,text="List of all students",font=("Roboto", 24))
-    label.pack(pady=12,padx=10)
+    for x in l:
+        print(x)
+        for j in range(len(x)):
+            d=ctk.CTkLabel(frame,width=100,text=x[j],anchor=W)
+            d.grid(row=0,column=j)
 
-    for i in students:
-        if i[0]!='admin':
-            # print(i[0])
-            button=ctk.CTkButton(frame,text=f"{i[0]}")
-            button.pack(pady=12,padx=10)
-        else:
-            continue
+    i=1
+    for student in students:
+        for j in range(len(student)):
+            e=ctk.CTkLabel(frame,width=100,text=student[j],anchor=W)
+            e.grid(row=i,column=j)
+        i+=1
 
-
-    button0=ctk.CTkButton(frame,text="Add Students",command=add_student,hover_color="#059DC0")
-    button0.pack(pady=12,padx=10)
+    button0=ctk.CTkButton(window,text="Add Students",command=add_student,hover_color="#059DC0")
+    button0.grid(row=2,column=1,pady=12,padx=10)
         
-    button1=ctk.CTkButton(frame,text="close",command=close,hover_color="red")
-    button1.pack(pady=12,padx=10,side='bottom')
+    button1=ctk.CTkButton(window,text="close",command=close,hover_color="red")
+    button1.grid(row=3,column=2,pady=12,padx=10)
 
-    button2=ctk.CTkButton(frame,text="Show details",command=detail)
-    button2.pack(pady=12,padx=10,side='bottom')
+    button2=ctk.CTkButton(window,text="Show details",command=detail)
+    button2.grid(row=2,column=2,pady=12,padx=10)
 
-    button=ctk.CTkButton(frame,text="Modify",command=modify)
-    button.pack(pady=12,padx=10,side="bottom")
+    button=ctk.CTkButton(window,text="Modify",command=modify)
+    button.grid(row=3,column=1,pady=12,padx=10)
 
-    name_usr=ctk.CTkEntry(frame,placeholder_text="Student name")
-    name_usr.pack(pady=12,padx=10,side='bottom')
+    name_usr=ctk.CTkEntry(window,placeholder_text="Student name")
+    name_usr.grid(row=2,column=0,pady=12,padx=10)
 
 
     root.withdraw()
